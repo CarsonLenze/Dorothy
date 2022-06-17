@@ -1,0 +1,38 @@
+name: Auto Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deployment:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "16.x"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create the cache
+        run: |
+          touch resources/cache.json
+          echo '{ "blacklists": [] }' | jq >> resources/cache.json
+          cat resources/cache.json
+
+      - name: Create the env file
+        run: |
+          touch .env
+          echo "$secrets" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> .env
+          cat .env
+        env:
+          secrets: ${{ toJson(secrets) }}
+
+      - name: Restart server application
+        run: pm2 restart Dorothy

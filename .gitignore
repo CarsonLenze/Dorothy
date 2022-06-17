@@ -1,0 +1,9 @@
+#node modules
+/node_modules
+
+#environment variables
+.env*local
+.env
+
+#cache
+resources/cache.json
