@@ -11,7 +11,7 @@ module.exports = {
 
         let data = button.client.cache.get(args[1]);
         if (!data || button.componentType == 'SELECT_MENU') {
-            const request = await axios.get(`${process.env.API_URL}/leaderboards/${args[1]}`, { headers: { token: process.env.API_KEY } })
+            const request = await axios.get(`${process.env.API_URL}/leaderboards/${args[1]}`, { headers: { token: process.env.API_KEY } }).catch(() => { /* ERR */ });
 
             if (!request) {
                 const error = new MessageEmbed()
