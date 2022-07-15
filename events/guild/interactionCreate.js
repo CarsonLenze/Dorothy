@@ -29,6 +29,7 @@ module.exports = async (bot, interaction) => {
     }
 
     if (file.config.locked) {
+        await bot.application.fetch();
         const owner = bot.application.owner;
         const developers = owner.ownerId ? owner.members.map(member => member.user.id) : [owner.id]
         if (!developers.includes(interaction.user.id)) {
