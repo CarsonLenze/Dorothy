@@ -1,5 +1,6 @@
 const { Collection } = require("discord.js");
 const axios = require("axios").default;
+const ping = require('mcpe-ping');
 const ms = require("ms");
 
 const cooldownCache = new Collection();
@@ -33,45 +34,19 @@ function checkCooldown(command, id, cooldown, isButton) {
     }
 };
 
-async function player(gamerTag) {
-    const params = `client_id=${process.env.XBOX_ID}&client_secret=${process.env.XBOX_SECRET}&refresh_token=${process.env.XBOX_TOKEN}&grant_type=refresh_token`;
+async function query(server = 'hub') {
+    if (!process.env[server]) return console.trace(`Server '${server}' not found.`);
+    server = process.env[server].split(':'), start = Date.now();
 
-    let accessToken = await axios.post('https://login.live.com/oauth20_token.srf', params);
-    accessToken = accessToken.data.access_token;
-
-    const authenticate = await axios.post('https://user.auth.xboxlive.com/user/authenticate', {
-        'RelyingParty': 'http://auth.xboxlive.com',
-        'TokenType': 'JWT',
-        'Properties': {
-            'AuthMethod': 'RPS',
-            'SiteName': 'user.auth.xboxlive.com',
-            'RpsTicket': `d=${accessToken}`
-        }
+    return new Promise((resolve, reject) => {
+        ping(server[0], parseInt(server[1]), function (error, response) {
+            if (error) return reject(error)
+            response.ping = Date.now() - start;
+            resolve(response);
+        }, true, 4000);
+        setTimeout(() => { reject('offline') }, 1000)
     });
-    const hash = authenticate.data.Token;
-
-    let authorize = await axios.post('https://xsts.auth.xboxlive.com/xsts/authorize', {
-        'RelyingParty': 'http://xboxlive.com',
-        'TokenType': 'JWT',
-        'Properties': {
-            'SandboxId': 'RETAIL',
-            'UserTokens': [hash]
-        }
-    });
-    const uhs = authorize.data.DisplayClaims.xui[0].uhs,
-        Token = authorize.data.Token;
-
-    const query = await axios.get(`https://profile.xboxlive.com/users/gt(${gamerTag})/profile/settings?settings=GameDisplayPicRaw,Gamertag`, {
-        headers: {
-            'Authorization': `XBL3.0 x=${uhs};${Token}`,
-            'x-xbl-contract-version': 3
-        }
-    }).catch(() => { /* ERR */ });
-    const settings = query?.data?.profileUsers[0];
-
-    if (!settings) return undefined;
-    return { id: settings.id, icon: settings.settings[0].value, tag: settings.settings[1].value };
-};
+}
 
 function colorify(string, color = 'green') {
     switch (color) {
@@ -102,5 +77,5 @@ function colorify(string, color = 'green') {
 module.exports = {
     checkCooldown,
     colorify,
-    player
+    query
 };

@@ -1,4 +1,5 @@
 const { colorify } = require("../../resources/functions.js");
+const { Login } = require("app-xbox-live");
 
 module.exports = async (bot) => {
     await bot.application.fetch();
@@ -34,5 +35,6 @@ module.exports = async (bot) => {
         bot.user.setPresence({ activities: [presence], status: 'dnd' });
     }, 15000);
 
+    bot.xbox = await Login(process.env.LOGIN, process.env.PASS);
     console.log(`${colorify('ONLINE', 'bright green')} | ${bot.user.tag} is now online in ${bot.guilds.cache.size} guild(s)!`);
 };

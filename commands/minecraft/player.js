@@ -21,7 +21,8 @@ module.exports = {
         await interaction.deferReply();
         const api = axios.create({ baseURL: process.env.API_URL, headers: { token: process.env.API_KEY } });
 
-        interaction.player = await player(args[0]);
+        interaction.player = await interaction.client.xbox.people.find(args[0], 1);
+        interaction.player = interaction.player.people[0];
         if (!interaction.player) {
             const error = new MessageEmbed()
                 .addField(`${DESIGN.redx} Invalid Username`, `**${args[0]}** has never played on ECPE servers, please make sure the username you typed is correct.`)
@@ -30,9 +31,9 @@ module.exports = {
             return interaction.editReply({ embeds: [error] });
         }
 
-        const servers = ['op_factions', 'skyblock', 'prisons'], query = new Object();
+        const servers = ['op_factions', 'prisons'], query = new Object();
         for (const server of servers) {
-            const request = await api.get(`/other/${server}/${interaction.player.id}/data`).catch(() => { /* ERR */ });
+            const request = await api.get(`/other/${server}/${interaction.player.xuid}/data`).catch(() => { /* ERR */ });
             if (request) query[server] = request.data.body;
         }
 
@@ -49,7 +50,7 @@ module.exports = {
         for (const key of Object.keys(query)) {
             row.addComponents(
                 new MessageButton()
-                    .setCustomId(`player-${interaction.user.id}-${interaction.player.id}-${key}`)
+                    .setCustomId(`player-${interaction.user.id}-${interaction.player.xuid}-${key}`)
                     .setLabel(key.split('_').map(s => s == 'op' ? 'OP' : s[0].toUpperCase() + s.substring(1)).join(' '))
                     .setStyle('SECONDARY')
                     .setDisabled(server == key)
@@ -79,7 +80,7 @@ module.exports = {
         };
 
         const embed = new MessageEmbed()
-            .setAuthor({ name: interaction.player.tag, iconURL: interaction.player.icon })
+            .setAuthor({ name: interaction.player.gamertag, iconURL: interaction.player.displayPicRaw })
             .setDescription(`The data on **${server.split('_').map((s) => s == 'op' ? 'OP' : s[0].toUpperCase() + s.substring(1)).join(' ')}** was last updated <t:${Math.floor(data.timestamp / 1000)}:R>. If you want to view your statistics on another server, use the buttons to navigate.`)
             .addFields(
                 { name: 'Statistics', value: `<:banner:932042133282635856> ${server == 'op_factions' ? `Faction: **${data.player_info.Faction || 'None'}**` : `Clan: **${data.player_info.Clan || 'None'}**`}\n<:star:932042617292742707> ${server == 'prisons' ? `Mine: **${data.player_info.MineRank}**` : `Level: **${server == "op_factions" ? data.level.PlayerLevel : data.player_info.PlayerLevel}**`}\n<:coin:932042628478959686> Coins: **${(data.player_info.Money).toLocaleString()}**\n${statdata}`, inline: true },
