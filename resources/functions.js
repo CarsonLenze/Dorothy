@@ -34,7 +34,7 @@ function checkCooldown(command, id, cooldown, isButton) {
     }
 };
 
-async function query(server = 'hub') {
+async function query(server = 'HUB') {
     if (!process.env[server]) return console.trace(`Server '${server}' not found.`);
     server = process.env[server].split(':'), start = Date.now();
 

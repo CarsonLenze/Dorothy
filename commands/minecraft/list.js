@@ -28,7 +28,7 @@ module.exports = {
         if (!args) {
             let playerCount = 0, servers = ['op_factions', 'skyblock', 'cod', 'prisons', 'hub'];
             for (const server of servers) {
-                let data = await query(server).catch(() => { /* ERR */ });
+                let data = await query(server.toUpperCase()).catch(() => { /* ERR */ });
                 playerCount += parseInt(data?.currentPlayers || 0);
             }
 
@@ -40,7 +40,7 @@ module.exports = {
             return interaction.editReply({ embeds: [embed] });
         }
 
-        const data = await query(args[0]).catch(() => { /* ERR */ });
+        const data = await query(args[0].toUpperCase()).catch(() => { /* ERR */ });
         if (!data) {
             const embed = new MessageEmbed()
                 .addField(`${DESIGN.redx} Unreachable Server`, `The server we were trying to reach may be offline.`)
