@@ -15,7 +15,8 @@ module.exports = {
         if (button.componentType == 'SELECT_MENU') {
             await button.deferReply({ ephemeral: true });
 
-            button.player = await player(args[1]);
+            button.player = await button.client.xbox.people.find(args[0], 1);
+            button.player = button.player.people[0];
             if (!button.player) {
                 const error = new MessageEmbed()
                     .addField(`${DESIGN.redx} Invalid Username`, `**${args[0]}** has never played on ECPE servers, please make sure the username you typed is correct.`)
@@ -24,7 +25,7 @@ module.exports = {
                 return button.editReply({ embeds: [error] });
             }
 
-            const servers = ['op_factions', 'skyblock', 'prisons'];
+            const servers = ['op_factions', 'prisons'];
             for (const server of servers) {
                 const request = await api.get(`/other/${server}/${button.player.id}/data`).catch(() => { /* ERR */ });
                 if (request) query[server] = request.data.body;

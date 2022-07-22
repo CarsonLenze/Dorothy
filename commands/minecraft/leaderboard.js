@@ -60,7 +60,7 @@ module.exports = {
 
         const embeds = new MessageEmbed()
             .setTitle(`${DESIGN.loading} Make a Selection`)
-            .setDescription(`Please use the dropdown below to select a leaderboard from **${args[0].split('_').map((s) => s == 'op' ? 'OP' : s[0].toUpperCase() + s.substring(1)).join(' ')}**`)
+            .setDescription(`Please use the dropdown below to select a leaderboard from **${args[0].split('_').map((s) => DESIGN.names[s] || s[0].toUpperCase() + s.substring(1)).join(' ')}**`)
             .setColor(DESIGN.green);
 
         await interaction.reply({ embeds: [embeds], components: [row], ephemeral: true });

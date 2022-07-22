@@ -5,6 +5,7 @@
     "keys": ["<:vote_crate:932083655759781898>", "<:elite_crate:932083697430167622>", "<:master_crate:932083714899468318>", "<:legendary_crate:932083790283694192>", "<:godly_crate:932083835112423475>"],
     "exclusions": ["STR", "Power", "Level", "SpawnerCount", "CEExp", "BossDamage", "BossKills", "Kills", "Deaths", "CXP", "Orbs", "PlayerLevel", "DepositedMana", "Mana", "BlocksBroken", "Prestige"],
     "changes": [{"SpawnerCount": "Spawners"}, {"BossDamage": "Damage"}, {"BossKills": "Kills"}, {"PlayerLevel": "Level"}, {"DepositedMana": "Mana"}, {"BlocksBroken": "Blocks Broken"}, {"Prestige": "Level"}],
+    "names" : { "op": "OP", "cod": "Call of Duty" },
     "loading": "<a:loading:936738198665695322>",
     "redx": "<:redx:981312699814268998>",
     "check": "<:check:945888202953203732>"

@@ -71,7 +71,7 @@ module.exports = {
 
         const embed = new MessageEmbed()
             .setAuthor({ name: args[1] })
-            .setDescription(`The data on **${args[0].split('_').map((s) => s == 'op' ? 'OP' : s[0].toUpperCase() + s.substring(1)).join(' ')}** was updated <t:${Math.floor(body.timestamp / 1000)}:R>. ${args[1]} is a faction with **${options.length}** member(s) and is lead by **${Object.values(data.Members).find(x => x.Rank.toLowerCase() == 'leader').name}**.`)
+            .setDescription(`The data on **${args[0].split('_').map((s) => DESIGN.names[s] || s[0].toUpperCase() + s.substring(1)).join(' ')}** was updated <t:${Math.floor(body.timestamp / 1000)}:R>. ${args[1]} is a faction with **${options.length}** member(s) and is lead by **${Object.values(data.Members).find(x => x.Rank.toLowerCase() == 'leader').name}**.`)
             .addField('Statistics', `<:sword:932081696239673375> Strength: ${(args[0] == 'op_factions' ? `**${(data.STR).toLocaleString()}**\n<:coin:932042628478959686> Value **${(data.SpawnerValue).toLocaleString()}**` : `**${(data.Power).toLocaleString()}**\n${args[0] == 'prisons' ? `<:potion:932085511030452305> Mana: **${(data.DepositedMana).toLocaleString()}**` : `<:coin:932042628478959686> Coins: **${(data.Funds).toLocaleString()}**`}`)}\n<:star:932042617292742707> Level: **${data.Level}**`, true)
             .setColor(DESIGN.green)
             .setTimestamp();
@@ -85,6 +85,7 @@ module.exports = {
             embed.addField('Perks', `<:coin:932042628478959686> Power Grind: ${level(body.perks ? body.perks.PowerGrindLevel : data.SaleBoost)}\n<:envelope:932838836009062420> Capacity: ${level(body.perks ? body.perks.CapacityLevel : data.Capacity)}\n${args[0] == 'op_factions' ? '<:potion:932085511030452305> CEEXP Grind: ' + level(body.perks.CustomGrindLevel) + '\n' : ''}${body.perks ? `<:flight:932836301265330176> Flight: **${body.perks.FactionFly ? 'Yes' : 'No'}**` : ''}`, true);
         }
 
+        if (args[0] == 'skyblock') return interaction.editReply({ embeds: [embed] });
         await interaction.editReply({ embeds: [embed], components: [row] });
     },
 };
