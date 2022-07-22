@@ -35,4 +35,4 @@ jobs:
           secrets: ${{ toJson(secrets) }}
 
       - name: Restart server application
-        run: pm2 restart Dorothy
+        run: pm2 restart Dorothy --update-env
